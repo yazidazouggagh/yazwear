@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">YazWear</string>
+    <string name="logo_yazwear">Logo YazWear</string>
+    <string name="connexion">Connexion</string>
+    <string name="inscription">Inscription</string>
+    <string name="email">Email</string>
+    <string name="nom_complet">Nom complet</string>
+    <string name="mot_de_passe">Mot de passe</string>
+    <string name="se_connecter">Se connecter</string>
+    <string name="s_inscrire">S\'inscrire</string>
+    <string name="pas_de_compte_inscrivez_vous">Pas de compte ? Inscrivez-vous</string>
+    <string name="deja_un_compte_connectez_vous">Déjà un compte ? Connectez-vous</string>
+</resources>
