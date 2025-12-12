@@ -1,3 +1,4 @@
+
 package com.example.yazwear.screens
 
 import androidx.compose.foundation.Image
@@ -28,13 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BagScreen(navController: NavController, bagViewModel: BagViewModel = viewModel()) {
+fun BagScreen(navController: NavController, bagViewModel: BagViewModel) {
     val bagItems by bagViewModel.bagItems.collectAsState()
     val groupedItems = bagItems.groupBy { it }.mapValues { it.value.size }
 
@@ -147,8 +147,8 @@ fun QuantitySelector(
             .border(1.dp, Color(0xFFEEEEEE), CircleShape)
             .padding(horizontal = 4.dp)
     ) {
-        IconButton(onClick = onRemove, modifier = Modifier.size(28.dp), enabled = quantity > 1) {
-            Icon(Icons.Default.Remove, contentDescription = "Remove one", tint = if(quantity > 1) Color.Black else Color.Gray)
+        IconButton(onClick = onRemove, modifier = Modifier.size(28.dp), enabled = quantity > 0) {
+            Icon(Icons.Default.Remove, contentDescription = "Remove one", tint = if(quantity > 0) Color.Black else Color.Gray)
         }
         Text(
             text = "$quantity",

@@ -7,10 +7,12 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.yazwear.MainActivity
 import com.example.yazwear.R
-import com.example.yazwear.Activity.RegisterActivity
+import com.example.yazwear.YazwearApplication
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,8 +25,17 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val repository = (application as YazwearApplication).repository
+
         initializeViews()
         setupClickListeners()
+
+        // Check if a user is already logged in
+        lifecycleScope.launch {
+            if (repository.getLoggedInUser() != null) {
+                navigateToMain()
+            }
+        }
     }
 
     private fun initializeViews() {
@@ -49,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
         val password = passwordEditText.text.toString().trim()
 
         if (validateInputs(email, password)) {
-
             performLogin(email, password)
         }
     }
@@ -79,13 +89,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun performLogin(email: String, password: String) {
-
         Toast.makeText(this, "Connexion réussie!", Toast.LENGTH_SHORT).show()
+        navigateToMain()
+    }
 
+    private fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
+
     private fun navigateToRegister() {
         val intent = Intent(this, RegisterActivity::class.java)
         startActivity(intent)

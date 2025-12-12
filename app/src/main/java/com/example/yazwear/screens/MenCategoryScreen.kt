@@ -25,27 +25,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.yazwear.R
 import com.example.yazwear.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel) {
+    val productViewModel: ProductViewModel = viewModel(factory = ProductViewModelFactory())
+    val uiState by productViewModel.uiState.collectAsState()
 
-    val products = listOf(
-        Product(R.drawable.black_sweatshirt, "Sweat-shirt -noir-", "390.00 MAD", 450),
-        Product(R.drawable.grise, "Fermeture éclair grise", "590.00 MAD", 320),
-        Product(R.drawable.leather, "Veste en cuir RETRO CLUB", "850.00 MAD", 680),
-        Product(R.drawable.allemand, "Maillot Allemagne -blanc-", "349.00 MAD", 550),
-        Product(R.drawable.demi_manchesnoir, "T-shirt à manches longues", "450.00 MAD", 450),
-        Product(R.drawable.vert, "Polo oversize imprimé Quiet place", "350.00 MAD", 210)
-    )
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -118,7 +109,7 @@ fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel) 
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(products) { product ->
+            items(uiState.products) { product ->
                 ProductCard(product = product, navController = navController)
             }
         }
@@ -172,11 +163,4 @@ fun ProductCard(product: Product, navController: NavController) {
             )
         }
     }
-}
-
-
-@Preview(showSystemUi = true)
-@Composable
-fun MenCategoryScreenPreview() {
-    MenCategoryScreen(navController = rememberNavController(), bagViewModel = viewModel())
 }

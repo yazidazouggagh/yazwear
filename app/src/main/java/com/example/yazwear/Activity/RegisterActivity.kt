@@ -7,8 +7,12 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.yazwear.R
+import com.example.yazwear.YazwearApplication
+import com.example.yazwear.data.UserEntity
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -84,12 +88,24 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun performRegistration(fullName: String, email: String, password: String) {
-        Toast.makeText(this, "Inscription réussie!", Toast.LENGTH_SHORT).show()
+        val repository = (application as YazwearApplication).repository
+
+        lifecycleScope.launch {
+            val user = UserEntity(fullName = fullName, email = email)
+            repository.insertUser(user)
+
+            Toast.makeText(this@RegisterActivity, "Inscription réussie!", Toast.LENGTH_SHORT).show()
+            navigateToLoginWithEmail(email)
+        }
+    }
+
+    private fun navigateToLoginWithEmail(email: String) {
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra("email", email)
         startActivity(intent)
         finish()
     }
+
     private fun navigateToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)

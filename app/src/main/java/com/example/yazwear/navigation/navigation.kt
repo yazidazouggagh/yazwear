@@ -1,18 +1,20 @@
 package com.example.yazwear.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.yazwear.YazwearApplication
 import com.example.yazwear.screens.*
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object MenCategory : Screen("men_category")
-    object ProductDetail : Screen("product_detail/{productName}") {
+    object ProductDetail : Screen("product_detail/{productName}") { // Reverted to productName
         fun createRoute(productName: String) = "product_detail/$productName"
     }
     object Bag : Screen("bag")
@@ -20,7 +22,9 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    val bagViewModel: BagViewModel = viewModel()
+    val context = LocalContext.current
+    val repository = (context.applicationContext as YazwearApplication).repository
+    val bagViewModel: BagViewModel = viewModel(factory = BagViewModelFactory(repository))
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {

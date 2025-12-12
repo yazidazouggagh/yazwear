@@ -5,20 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -39,34 +26,28 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.yazwear.R
 import com.example.yazwear.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(navController: NavController, productName: String, bagViewModel: BagViewModel = viewModel()) {
+fun ProductDetailScreen(navController: NavController, productName: String, bagViewModel: BagViewModel) {
     val product = getProductByName(productName)
 
     BottomSheetScaffold(
-
         sheetContent = { ProductInfoSheet(product, bagViewModel) },
         scaffoldState = rememberBottomSheetScaffoldState(),
-
         sheetPeekHeight = 170.dp,
         sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         sheetContainerColor = Color.White,
         sheetShadowElevation = 16.dp,
-
-        topBar = { ProductTopBar(navController = navController, bagViewModel = bagViewModel, isTransparent = false) },
+        topBar = { ProductTopBar(navController = navController, bagViewModel = bagViewModel, isTransparent = false, product = product) },
         containerColor = Color(0xFFE0E0E0)
     ) {
-
         Image(
             painter = painterResource(id = product.imageRes),
             contentDescription = product.name,
@@ -83,7 +64,6 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
             .padding(horizontal = 24.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Poignée pour indiquer que le panneau est déplaçable
         Box(
             modifier = Modifier
                 .padding(vertical = 16.dp)
@@ -118,9 +98,7 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
 
         Button(
             onClick = { bagViewModel.addToBag(product) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+            modifier = Modifier.fillMaxWidth().height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -155,14 +133,13 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductTopBar(navController: NavController, bagViewModel: BagViewModel, isTransparent: Boolean) {
+fun ProductTopBar(navController: NavController, bagViewModel: BagViewModel, isTransparent: Boolean, product: Product) {
     val bagItemCount by bagViewModel.bagItemCount.collectAsState()
-    // **CORRECTION 3: Le titre et l'icône sont noirs si le fond est blanc, et blancs si le fond est transparent**
     val contentColor = if (isTransparent) Color.White else Color.Black
-    val bgColor = if (isTransparent) Color.Transparent else Color.White
+    val bgColor = if (isTransparent) Color.Transparent else Color.White.copy(alpha = 0.8f)
 
     CenterAlignedTopAppBar(
-        title = { Text("Men", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = contentColor) },
+        title = { Text(product.category, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = contentColor) },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = contentColor)
@@ -189,8 +166,6 @@ fun ProductTopBar(navController: NavController, bagViewModel: BagViewModel, isTr
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = bgColor)
     )
 }
-
-
 
 @Composable
 fun SelectDropDown(title: String, modifier: Modifier = Modifier) {
@@ -245,18 +220,12 @@ fun ExpandableInfoCard(info: ExpandableInfo) {
 
 fun getProductByName(name: String): Product {
     val products = listOf(
-        Product(R.drawable.black_sweatshirt, "Sweat-shirt -noir-", "390.00 MAD", 450),
-        Product(R.drawable.grise, "Fermeture éclair grise", "590.00 MAD", 320),
-        Product(R.drawable.leather, "Veste en cuir RETRO CLUB", "850.00 MAD", 680),
-        Product(R.drawable.allemand, "Maillot Allemagne -blanc-", "349.00 MAD", 550),
-        Product(R.drawable.demi_manchesnoir, "T-shirt à manches longues", "450.00 MAD", 450),
-        Product(R.drawable.vert, "Polo oversize imprimé Quiet place", "350.00 MAD", 210)
+        Product(R.drawable.black_sweatshirt, "Sweat-shirt -noir-", "390.00 MAD", 450, "Men"),
+        Product(R.drawable.grise, "Fermeture éclair grise", "590.00 MAD", 320, "Men"),
+        Product(R.drawable.leather, "Veste en cuir RETRO CLUB", "850.00 MAD", 680, "Men"),
+        Product(R.drawable.allemand, "Maillot Allemagne -blanc-", "349.00 MAD", 550, "Men"),
+        Product(R.drawable.demi_manchesnoir, "T-shirt à manches longues", "450.00 MAD", 450, "Men"),
+        Product(R.drawable.vert, "Polo oversize imprimé Quiet place", "350.00 MAD", 210, "Men")
     )
     return products.find { it.name == name } ?: products.first()
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun ProductDetailScreenPreview() {
-    ProductDetailScreen(rememberNavController(), "Veste en cuir RETRO CLUB")
 }
