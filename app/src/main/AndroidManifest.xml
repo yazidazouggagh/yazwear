@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".YazwearApplication"
@@ -14,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Yazwear"
-        tools:targetApi="31">
+        tools:targetApi="33">
 
         <activity
             android:name=".Activity.LoginActivity"
@@ -39,6 +40,11 @@
 
         <service
             android:name=".service.InactivityService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".service.NotificationService"
             android:enabled="true"
             android:exported="false" />
 

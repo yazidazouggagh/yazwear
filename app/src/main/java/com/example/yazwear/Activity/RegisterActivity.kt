@@ -27,7 +27,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Stop the inactivity timer on the register screen
+
         val stopIntent = Intent(this, InactivityService::class.java)
         stopIntent.action = InactivityService.ACTION_STOP_TIMER
         startService(stopIntent)

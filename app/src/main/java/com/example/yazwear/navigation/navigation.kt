@@ -1,5 +1,6 @@
 package com.example.yazwear.navigation
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,8 +24,9 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
-    val repository = (context.applicationContext as YazwearApplication).repository
-    val bagViewModel: BagViewModel = viewModel(factory = BagViewModelFactory(repository))
+    val application = context.applicationContext as YazwearApplication
+    val repository = application.repository
+    val bagViewModel: BagViewModel = viewModel(factory = BagViewModelFactory(repository, application))
     val productViewModel: ProductViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {

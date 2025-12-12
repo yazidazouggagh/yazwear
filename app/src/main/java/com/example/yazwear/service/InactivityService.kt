@@ -1,13 +1,12 @@
 package com.example.yazwear.service
 
-
-
 import android.app.Service
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.yazwear.util.NotificationHelper
 
 class InactivityService : Service() {
 
@@ -55,6 +54,9 @@ class InactivityService : Service() {
 
             override fun onFinish() {
                 Log.d("InactivityService", "Timeout d'inactivité atteint. Déconnexion.")
+
+                val notificationHelper = NotificationHelper(this@InactivityService)
+                notificationHelper.showNotification("Yazwear Inactivity", "Vous avez été inactif pendant 30 secondes. L'application va se fermer.")
 
                 val intent = Intent(ACTION_USER_INACTIVE)
                 LocalBroadcastManager.getInstance(this@InactivityService).sendBroadcast(intent)

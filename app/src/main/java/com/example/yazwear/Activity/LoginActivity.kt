@@ -36,12 +36,7 @@ class LoginActivity : AppCompatActivity() {
         initializeViews()
         setupClickListeners()
 
-        // Check if a user is already logged in
-//        lifecycleScope.launch {
-//            if (repository.getLoggedInUser() != null) {
-//                navigateToMain()
-//            }
-//        }
+
     }
 
     private fun initializeViews() {
