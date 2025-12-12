@@ -38,9 +38,9 @@ class BagViewModel(private val repository: YazwearRepository, private val applic
 
     private fun checkItemCountAndNotify() {
         viewModelScope.launch {
-            if (bagItems.value.size == 6) {
+            if (bagItems.value.size == 2) {
                 val notificationHelper = NotificationHelper(application)
-                notificationHelper.showNotification("Panier Yazwear", "Votre panier contient maintenant 6 articles !")
+                notificationHelper.showNotification("Panier Yazwear", "Votre panier dépasse maintenant 2 articles !")
             }
         }
     }

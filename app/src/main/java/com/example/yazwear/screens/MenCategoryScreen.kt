@@ -113,7 +113,7 @@ fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel, 
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(products) { product ->
+            items(products.filter { it.category == "men's clothing" }) { product ->
                 ProductCard(product = product, navController = navController)
             }
         }
