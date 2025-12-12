@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.yazwear.MainActivity
 import com.example.yazwear.R
 import com.example.yazwear.YazwearApplication
+import com.example.yazwear.service.InactivityService
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
@@ -25,17 +26,22 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Stop the inactivity timer on the login screen
+        val stopIntent = Intent(this, InactivityService::class.java)
+        stopIntent.action = InactivityService.ACTION_STOP_TIMER
+        startService(stopIntent)
+
         val repository = (application as YazwearApplication).repository
 
         initializeViews()
         setupClickListeners()
 
         // Check if a user is already logged in
-        lifecycleScope.launch {
-            if (repository.getLoggedInUser() != null) {
-                navigateToMain()
-            }
-        }
+//        lifecycleScope.launch {
+//            if (repository.getLoggedInUser() != null) {
+//                navigateToMain()
+//            }
+//        }
     }
 
     private fun initializeViews() {
@@ -89,6 +95,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun performLogin(email: String, password: String) {
+        // On successful login, start the timer when navigating to MainActivity
+        val startIntent = Intent(this, InactivityService::class.java)
+        startIntent.action = InactivityService.ACTION_START_TIMER
+        startService(startIntent)
+
         Toast.makeText(this, "Connexion réussie!", Toast.LENGTH_SHORT).show()
         navigateToMain()
     }

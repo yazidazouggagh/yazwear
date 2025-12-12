@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.yazwear.R
 import com.example.yazwear.YazwearApplication
 import com.example.yazwear.data.UserEntity
+import com.example.yazwear.service.InactivityService
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
@@ -25,6 +26,11 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        // Stop the inactivity timer on the register screen
+        val stopIntent = Intent(this, InactivityService::class.java)
+        stopIntent.action = InactivityService.ACTION_STOP_TIMER
+        startService(stopIntent)
 
         initializeViews()
         setupClickListeners()
