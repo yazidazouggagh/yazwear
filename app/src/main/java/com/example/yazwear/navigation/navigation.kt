@@ -14,8 +14,8 @@ import com.example.yazwear.screens.*
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object MenCategory : Screen("men_category")
-    object ProductDetail : Screen("product_detail/{productName}") { // Reverted to productName
-        fun createRoute(productName: String) = "product_detail/$productName"
+    object ProductDetail : Screen("product_detail/{productId}") {
+        fun createRoute(productId: Int) = "product_detail/$productId"
     }
     object Bag : Screen("bag")
 }
@@ -25,21 +25,22 @@ fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
     val repository = (context.applicationContext as YazwearApplication).repository
     val bagViewModel: BagViewModel = viewModel(factory = BagViewModelFactory(repository))
+    val productViewModel: ProductViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             HomeScreen(navController, bagViewModel)
         }
         composable(Screen.MenCategory.route) {
-            MenCategoryScreen(navController, bagViewModel)
+            MenCategoryScreen(navController, bagViewModel, productViewModel)
         }
         composable(
             route = Screen.ProductDetail.route,
-            arguments = listOf(navArgument("productName") { type = NavType.StringType })
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val productName = backStackEntry.arguments?.getString("productName")
-            if (productName != null) {
-                ProductDetailScreen(navController, productName, bagViewModel)
+            val productId = backStackEntry.arguments?.getInt("productId")
+            if (productId != null) {
+                ProductDetailScreen(navController, productId, bagViewModel, productViewModel)
             } else {
                 navController.popBackStack()
             }

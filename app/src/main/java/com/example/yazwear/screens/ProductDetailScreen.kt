@@ -24,36 +24,47 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.yazwear.R
+import coil.compose.rememberAsyncImagePainter
 import com.example.yazwear.navigation.Screen
+
+data class ExpandableInfo(
+    val icon: ImageVector,
+    val title: String,
+    val content: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(navController: NavController, productName: String, bagViewModel: BagViewModel) {
-    val product = getProductByName(productName)
+fun ProductDetailScreen(navController: NavController, productId: Int, bagViewModel: BagViewModel, productViewModel: ProductViewModel = viewModel()) {
+    val product by productViewModel.product.collectAsState()
 
-    BottomSheetScaffold(
-        sheetContent = { ProductInfoSheet(product, bagViewModel) },
-        scaffoldState = rememberBottomSheetScaffoldState(),
-        sheetPeekHeight = 170.dp,
-        sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        sheetContainerColor = Color.White,
-        sheetShadowElevation = 16.dp,
-        topBar = { ProductTopBar(navController = navController, bagViewModel = bagViewModel, isTransparent = false, product = product) },
-        containerColor = Color(0xFFE0E0E0)
-    ) {
-        Image(
-            painter = painterResource(id = product.imageRes),
-            contentDescription = product.name,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    LaunchedEffect(productId) {
+        productViewModel.getProductById(productId)
+    }
+
+    product?.let {prod ->
+        BottomSheetScaffold(
+            sheetContent = { ProductInfoSheet(prod, bagViewModel) },
+            scaffoldState = rememberBottomSheetScaffoldState(),
+            sheetPeekHeight = 170.dp,
+            sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+            sheetContainerColor = Color.White,
+            sheetShadowElevation = 16.dp,
+            topBar = { ProductTopBar(navController = navController, bagViewModel = bagViewModel, isTransparent = false, product = prod) },
+            containerColor = Color(0xFFE0E0E0)
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(prod.image),
+                contentDescription = prod.title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 }
 
@@ -73,7 +84,7 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
                 .align(Alignment.CenterHorizontally)
         )
 
-        Text(text = product.name, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+        Text(text = product.title, fontWeight = FontWeight.Bold, fontSize = 22.sp)
         Spacer(Modifier.height(16.dp))
 
         Row(
@@ -81,11 +92,11 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = product.price, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(text = "${product.price} MAD", fontWeight = FontWeight.Bold, fontSize = 18.sp)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Likes", modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(4.dp))
-                Text(text = product.likes.toString(), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(text = product.rating.count.toString(), fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -115,7 +126,7 @@ fun ProductInfoSheet(product: Product, bagViewModel: BagViewModel) {
         Spacer(Modifier.height(16.dp))
 
         val productInfos = listOf(
-            ExpandableInfo(Icons.AutoMirrored.Filled.ReceiptLong, "Product details", "Details content..."),
+            ExpandableInfo(Icons.AutoMirrored.Filled.ReceiptLong, "Product details", product.description),
             ExpandableInfo(Icons.Default.Sell, "Brand", "Brand content..."),
             ExpandableInfo(Icons.Default.Straighten, "Size and fit", "Size content..."),
             ExpandableInfo(Icons.Default.History, "History", "History content...")
@@ -216,16 +227,4 @@ fun ExpandableInfoCard(info: ExpandableInfo) {
             Text(info.content, modifier = Modifier.padding(start = 40.dp, bottom = 16.dp), color = Color.Gray)
         }
     }
-}
-
-fun getProductByName(name: String): Product {
-    val products = listOf(
-        Product(R.drawable.black_sweatshirt, "Sweat-shirt -noir-", "390.00 MAD", 450, "Men"),
-        Product(R.drawable.grise, "Fermeture éclair grise", "590.00 MAD", 320, "Men"),
-        Product(R.drawable.leather, "Veste en cuir RETRO CLUB", "850.00 MAD", 680, "Men"),
-        Product(R.drawable.allemand, "Maillot Allemagne -blanc-", "349.00 MAD", 550, "Men"),
-        Product(R.drawable.demi_manchesnoir, "T-shirt à manches longues", "450.00 MAD", 450, "Men"),
-        Product(R.drawable.vert, "Polo oversize imprimé Quiet place", "350.00 MAD", 210, "Men")
-    )
-    return products.find { it.name == name } ?: products.first()
 }

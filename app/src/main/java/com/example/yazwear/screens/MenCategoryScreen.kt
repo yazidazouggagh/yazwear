@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,20 +23,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.yazwear.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel) {
-    val productViewModel: ProductViewModel = viewModel(factory = ProductViewModelFactory())
-    val uiState by productViewModel.uiState.collectAsState()
+fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel, productViewModel: ProductViewModel = viewModel()) {
+    val products by productViewModel.products.collectAsState()
+
+    LaunchedEffect(Unit) {
+        productViewModel.getProducts()
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -109,7 +113,7 @@ fun MenCategoryScreen(navController: NavController, bagViewModel: BagViewModel) 
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(uiState.products) { product ->
+            items(products) { product ->
                 ProductCard(product = product, navController = navController)
             }
         }
@@ -121,11 +125,11 @@ fun ProductCard(product: Product, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate(Screen.ProductDetail.createRoute(product.name)) }
+            .clickable { navController.navigate(Screen.ProductDetail.createRoute(product.id)) }
     ) {
         Image(
-            painter = painterResource(id = product.imageRes),
-            contentDescription = product.name,
+            painter = rememberAsyncImagePainter(product.image),
+            contentDescription = product.title,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.75f)
@@ -136,7 +140,7 @@ fun ProductCard(product: Product, navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = product.name,
+            text = product.title,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
             maxLines = 1,
@@ -150,7 +154,7 @@ fun ProductCard(product: Product, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = product.price,
+                text = "${product.price} MAD",
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color.Black

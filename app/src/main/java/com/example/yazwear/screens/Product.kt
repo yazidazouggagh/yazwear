@@ -1,17 +1,16 @@
 package com.example.yazwear.screens
 
-import androidx.compose.ui.graphics.vector.ImageVector
-
 data class Product(
-    val imageRes: Int,
-    val name: String,
-    val price: String,
-    val likes: Int,
-    val category: String // Added category
+    val id: Int,
+    val title: String,
+    val price: Double,
+    val description: String,
+    val category: String,
+    val image: String,
+    val rating: Rating
 )
 
-data class ExpandableInfo(
-    val icon: ImageVector,
-    val title: String,
-    val content: String
+data class Rating(
+    val rate: Double,
+    val count: Int
 )

@@ -15,8 +15,8 @@ class YazwearRepository(
         productDao.insertProduct(product)
     }
 
-    suspend fun removeFromCart(productName: String) {
-        productDao.deleteOneByName(productName)
+    suspend fun removeFromCart(productId: Int) {
+        productDao.deleteProductById(productId)
     }
 
 

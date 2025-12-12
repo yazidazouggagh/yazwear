@@ -24,12 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,7 @@ fun BagScreen(navController: NavController, bagViewModel: BagViewModel) {
         bottomBar = {
             if (groupedItems.isNotEmpty()) {
                 val subtotal = groupedItems.entries.sumOf { (product, quantity) ->
-                    product.price.replace(" MAD", "").toDoubleOrNull()?.times(quantity) ?: 0.0
+                    product.price * quantity
                 }
                 val shippingFee = 50.00
                 val total = subtotal + shippingFee
@@ -113,8 +113,8 @@ fun BagItemCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = product.imageRes),
-            contentDescription = product.name,
+            painter = rememberAsyncImagePainter(product.image),
+            contentDescription = product.title,
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(12.dp)),
@@ -122,9 +122,9 @@ fun BagItemCard(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(product.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(product.title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(product.price, color = Color.Gray, fontSize = 14.sp)
+            Text("${product.price} MAD", color = Color.Gray, fontSize = 14.sp)
         }
         QuantitySelector(
             quantity = quantity,

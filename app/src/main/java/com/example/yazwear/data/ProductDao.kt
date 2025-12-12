@@ -14,8 +14,8 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(product: ProductEntity)
 
-    @Query("DELETE FROM products WHERE id = (SELECT id FROM products WHERE name = :productName LIMIT 1)")
-    suspend fun deleteOneByName(productName: String)
+    @Query("DELETE FROM products WHERE id = :productId")
+    suspend fun deleteProductById(productId: Int)
 
     @Delete
     suspend fun deleteProduct(product: ProductEntity)

@@ -29,7 +29,7 @@ class BagViewModel(private val repository: YazwearRepository) : ViewModel() {
 
     fun removeFromBag(product: Product) {
         viewModelScope.launch {
-            repository.removeFromCart(product.name)
+            repository.removeFromCart(product.id)
         }
     }
 }
